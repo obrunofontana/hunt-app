@@ -30,7 +30,7 @@ export default class Main extends Component {
       <View style={styles.productContainer}>
         <Text style={styles.productTitle}>{item.title}</Text>
         <Text style={styles.productDescription}>{item.description}</Text>
-        <TouchableOpacity tyle={styles.productButton} onPress={() => { }}>
+        <TouchableOpacity style={styles.productButton} onPress={() => { }}>
           <Text style={styles.productButtonText}>Acessar</Text>
         </TouchableOpacity>
       </View>
@@ -81,5 +81,18 @@ const styles = StyleSheet.create({
     marginTop: 5,
     lineHeight: 25,
   },
+  productButton:{
+    height: 42,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#DA552F',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10
+  },
+  productButtonText:{
+
+  }
 
 })
