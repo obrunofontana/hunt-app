@@ -10,32 +10,49 @@ export default class Main extends Component {
   };
 
   state = {
-    products: []
+    productInfo: {},
+    products: [],
+    page: 1
   };
 
   componentDidMount() {
     this.loadProdutcts();
-  }
+  };
 
-  loadProdutcts = async () => {
-    const response = await api.get('/products');
+  loadProdutcts = async (page = 1) => {
+    const response = await api.get(`/products?page=${page}`);
 
-    const { docs } = response.data;
+    const { docs, ...productInfo } = response.data;
 
-    this.setState({ products: docs });
-  }
+    this.setState({ products: [...this.state.products, ...docs], productInfo, page });
+  };
+
+  loadMore = () => {
+    const { page, productInfo } = this.state;
+
+    if (page === productInfo.pages) return;
+
+    const pageNumber = page + 1;
+
+    this.loadProdutcts(pageNumber);
+  };
 
   renderItems = ({ item }) => {
     return (
       <View style={styles.productContainer}>
         <Text style={styles.productTitle}>{item.title}</Text>
         <Text style={styles.productDescription}>{item.description}</Text>
-        <TouchableOpacity style={styles.productButton} onPress={() => { }}>
+        <TouchableOpacity
+          style={styles.productButton}
+          onPress={() => {
+            this.props.navigation.navigate('Product', { product: item });
+          }}
+        >
           <Text style={styles.productButtonText}>Acessar</Text>
         </TouchableOpacity>
       </View>
     );
-  }
+  };
 
   render() {
 
@@ -48,11 +65,13 @@ export default class Main extends Component {
           data={products}
           renderItem={this.renderItems}
           keyExtractor={item => item._id}
+          onEndReached={this.loadMore}
+          onEndReachedThreshold={0.1}
         />
       </View>
     );
   }
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -63,25 +82,25 @@ const styles = StyleSheet.create({
     padding: 0
   },
   productContainer: {
-    backgroundColor:'#fff',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#DDD',
     borderRadius: 5,
     padding: 20,
     marginBottom: 20,
   },
-  productTitle:{
+  productTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
   },
-  productDescription:{
+  productDescription: {
     fontSize: 16,
     color: '#999',
     marginTop: 5,
     lineHeight: 25,
   },
-  productButton:{
+  productButton: {
     height: 42,
     borderRadius: 5,
     borderWidth: 2,
@@ -91,8 +110,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10
   },
-  productButtonText:{
-
+  productButtonText: {
+    fontSize: 16,
+    color: '#DA552F',
+    fontWeight: 'bold'
   }
 
 })
